@@ -1,10 +1,10 @@
 # Sistem Informatic pentru Gestiunea Activităților de Service și Garanții Electrocasnice
 
 ## 📌 Informații Student
-* **Student:** [Numele Tău]
+* **Student:** 
 * **Disciplina:** Proiectarea Bazelor de Date
 * **An de Studiu:** III
-* **Cadru Didactic:** [Nume Profesor]
+* **Cadru Didactic:** 
 
 ---
 
