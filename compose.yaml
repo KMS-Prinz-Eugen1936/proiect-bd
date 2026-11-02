@@ -1,0 +1,32 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: service_electrocasnice_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password_service_2026
+      MYSQL_DATABASE: service_db
+      MYSQL_USER: student
+      MYSQL_PASSWORD: password_service_2026
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: service_electrocasnice_phpmyadmin
+    restart: always
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: root_password_service_2026
+      UPLOAD_LIMIT: 300M
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+
+volumes:
+  mysql_data:
+
