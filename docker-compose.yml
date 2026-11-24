@@ -1,0 +1,36 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: service_postgres
+    environment:
+      POSTGRES_DB: service_db
+      POSTGRES_USER: service_user
+      POSTGRES_PASSWORD: service_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./db/schema:/docker-entrypoint-initdb.d
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U service_user -d service_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  web:
+    build: ./app
+    container_name: service_web
+    environment:
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: service_db
+      DB_USER: service_user
+      DB_PASSWORD: service_password
+    ports:
+      - "5000:5000"
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:

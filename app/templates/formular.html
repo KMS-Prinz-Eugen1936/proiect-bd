@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bon Nou de Reparație — Service Electrocasnice</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #273549;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --success: #22c55e;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 15px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    .btn:hover {
+      background: var(--surface-2);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #082f49;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      color: #fff;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+
+    .card h2 {
+      font-size: 1.05rem;
+      margin-bottom: 14px;
+      color: var(--accent);
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 14px;
+    }
+
+    .field {
+      margin-bottom: 12px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-bottom: 5px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 9px 11px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    textarea {
+      min-height: 76px;
+      resize: vertical;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .switch-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      margin-bottom: 14px;
+    }
+
+    .switch-row input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--accent);
+      cursor: pointer;
+    }
+
+    .switch-row label {
+      margin: 0;
+      color: var(--text);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .brand-box {
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+    }
+
+    .msg {
+      margin-bottom: 16px;
+      padding: 11px 14px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      display: none;
+    }
+
+    .msg.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+
+    .msg.ok {
+      display: block;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.45);
+      color: #86efac;
+    }
+
+    .form-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      margin-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Înregistrare Bon de Reparație</h1>
+      </div>
+      <a class="btn" href="/">← Înapoi la panou</a>
+    </header>
+
+    <div id="feedback" class="msg"></div>
+
+    <form id="bon-form" onsubmit="handleSubmit(event)">
+      <section class="card">
+        <h2>1. Date Client</h2>
+        <div class="grid-2">
+          <div class="field">
+            <label for="client-nume">Nume complet *</label>
+            <input type="text" id="client-nume" name="client_nume" required placeholder="Ex. Popescu Andrei" />
+          </div>
+          <div class="field">
+            <label for="client-telefon">Telefon *</label>
+            <input type="text" id="client-telefon" name="client_telefon" required placeholder="Ex. 0740555666" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="client-adresa">Adresă</label>
+          <input type="text" id="client-adresa" name="client_adresa" placeholder="Strada, număr, localitate" />
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>2. Detalii Bon &amp; Defect</h2>
+        <div class="grid-2">
+          <div class="field">
+            <label for="bon-tehnician">Tehnician alocat</label>
+            <select id="bon-tehnician" name="id_tehnician">
+              <option value="">Nealocat momentan</option>
+            </select>
+          </div>
+        </div>
+        <div class="field">
+          <label for="bon-defect">Defect reclamat *</label>
+          <textarea id="bon-defect" name="defect" required placeholder="Descrie problema aparatului..."></textarea>
+        </div>
+        <div class="field">
+          <label for="bon-observatii">Observații recepție</label>
+          <input type="text" id="bon-observatii" name="observatii" placeholder="Stare estetică, mențiuni la predare..." />
+        </div>
+      </section>
+
+      <section class="card">
+        <h2>3. Tip Aparat &amp; Regim Garanție</h2>
+
+        <div class="switch-row">
+          <input type="checkbox" id="este-in-garantie" onchange="toggleGarantieSection()" />
+          <label for="este-in-garantie">Aparatul este în garanția producătorului</label>
+        </div>
+
+        <div id="sectiune-post-garantie">
+          <div class="grid-2">
+            <div class="field">
+              <label for="pg-denumire">Denumire aparat *</label>
+              <input type="text" id="pg-denumire" placeholder="Ex. Mașină de spălat rufe, Cuptor microunde" />
+            </div>
+            <div class="field">
+              <label for="pg-accesorii">Accesorii predate</label>
+              <input type="text" id="pg-accesorii" placeholder="Ex. Cablu alimentare, tavă, furtun" />
+            </div>
+          </div>
+        </div>
+
+        <div id="sectiune-garantie" style="display: none;">
+          <div class="grid-3">
+            <div class="field">
+              <label for="gp-brand-grup">Grup producător *</label>
+              <select id="gp-brand-grup" onchange="toggleBrandFields()">
+                <option value="bosch">Bosch / Siemens / Neff</option>
+                <option value="electrolux">Electrolux / AEG</option>
+                <option value="miele">Miele</option>
+                <option value="teka">Teka</option>
+                <option value="samus">Samus / Albatros</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="gp-data-achizitiei">Data achiziției *</label>
+              <input type="date" id="gp-data-achizitiei" />
+            </div>
+            <div class="field">
+              <label for="gp-loc-achizitie">Loc achiziție / Magazin</label>
+              <input type="text" id="gp-loc-achizitie" placeholder="Ex. Altex, eMAG, Flanco" />
+            </div>
+          </div>
+
+          <div class="grid-3">
+            <div class="field">
+              <label for="gp-nr-factura">Nr. factură</label>
+              <input type="text" id="gp-nr-factura" placeholder="Ex. FAC-2026-001" />
+            </div>
+            <div class="field">
+              <label for="gp-nr-certificat">Nr. certificat garanție</label>
+              <input type="text" id="gp-nr-certificat" placeholder="Ex. CG-9981" />
+            </div>
+            <div class="field">
+              <label for="gp-nr-fisa">Nr. fișă</label>
+              <input type="text" id="gp-nr-fisa" placeholder="Ex. FS-102" />
+            </div>
+          </div>
+
+          <div class="brand-box">
+            <div class="field">
+              <label for="brand-denumire">Denumire produs (conform certificat/etichetă)</label>
+              <input type="text" id="brand-denumire" placeholder="Ex. Plită inducție Bosch" />
+            </div>
+
+            <div id="fields-bosch" class="grid-3">
+              <div class="field">
+                <label for="bosch-e-nr">E-Nr</label>
+                <input type="text" id="bosch-e-nr" placeholder="Ex. PXY675DC1E/01" />
+              </div>
+              <div class="field">
+                <label for="bosch-fd">FD</label>
+                <input type="text" id="bosch-fd" placeholder="Ex. 0410" />
+              </div>
+              <div class="field">
+                <label for="bosch-z-nr">Z-Nr</label>
+                <input type="text" id="bosch-z-nr" placeholder="Ex. 00045" />
+              </div>
+            </div>
+
+            <div id="fields-electrolux" class="grid-2" style="display: none;">
+              <div class="field">
+                <label for="elx-model">Model</label>
+                <input type="text" id="elx-model" placeholder="Ex. EW6F428W" />
+              </div>
+              <div class="field">
+                <label for="elx-pnc">PNC</label>
+                <input type="text" id="elx-pnc" placeholder="Ex. 914915402" />
+              </div>
+            </div>
+
+            <div id="fields-generic" style="display: none;">
+              <div class="field">
+                <label for="generic-spec">Cod model / Serie / Câmpuri specifice producător</label>
+                <input type="text" id="generic-spec" placeholder="Ex. Mod. / Nr. serie / Cod produs" />
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <div class="form-actions">
+        <a class="btn" href="/">Anulează</a>
+        <button class="btn btn-primary" type="submit">Salvează bonul</button>
+      </div>
+    </form>
+  </div>
+
+  <script>
+    function showMsg(text, type = "ok") {
+      const el = document.getElementById("feedback");
+      el.className = `msg ${type}`;
+      el.textContent = text;
+      el.scrollIntoView({ behavior: "smooth", block: "nearest" });
+    }
+
+    function toggleGarantieSection() {
+      const inGarantie = document.getElementById("este-in-garantie").checked;
+      document.getElementById("sectiune-garantie").style.display = inGarantie ? "block" : "none";
+      document.getElementById("sectiune-post-garantie").style.display = inGarantie ? "none" : "block";
+      document.getElementById("pg-denumire").required = !inGarantie;
+      document.getElementById("gp-data-achizitiei").required = inGarantie;
+      if (inGarantie) toggleBrandFields();
+    }
+
+    function toggleBrandFields() {
+      const grup = document.getElementById("gp-brand-grup").value;
+      document.getElementById("fields-bosch").style.display = grup === "bosch" ? "grid" : "none";
+      document.getElementById("fields-electrolux").style.display = grup === "electrolux" ? "grid" : "none";
+      document.getElementById("fields-generic").style.display =
+        ["miele", "teka", "samus"].includes(grup) ? "block" : "none";
+    }
+
+    async function loadTehnicieni() {
+      try {
+        const res = await fetch("/api/tehnicieni");
+        if (!res.ok) return;
+        const list = await res.json();
+        const select = document.getElementById("bon-tehnician");
+        for (const t of list) {
+          const opt = document.createElement("option");
+          opt.value = String(t.id);
+          opt.textContent = t.nume;
+          select.appendChild(opt);
+        }
+      } catch (_) {
+        // Ignorăm dacă endpoint-ul nu răspunde momentan
+      }
+    }
+
+    async function handleSubmit(event) {
+      event.preventDefault();
+      const esteInGarantie = document.getElementById("este-in-garantie").checked;
+      const techVal = document.getElementById("bon-tehnician").value;
+
+      const payload = {
+        client: {
+          nume: document.getElementById("client-nume").value.trim(),
+          telefon: document.getElementById("client-telefon").value.trim(),
+          adresa: document.getElementById("client-adresa").value.trim() || null
+        },
+        bon: {
+          id_tehnician: techVal ? parseInt(techVal, 10) : null,
+          este_in_garantie: esteInGarantie,
+          defect: document.getElementById("bon-defect").value.trim(),
+          observatii: document.getElementById("bon-observatii").value.trim() || null
+        }
+      };
+
+      if (!esteInGarantie) {
+        payload.post_garantie = {
+          denumire_aparat: document.getElementById("pg-denumire").value.trim(),
+          accesorii: document.getElementById("pg-accesorii").value.trim() || null
+        };
+      } else {
+        const brandGrup = document.getElementById("gp-brand-grup").value;
+        const denumireProdus = document.getElementById("brand-denumire").value.trim() || null;
+
+        payload.garantie = {
+          brand_grup: brandGrup,
+          data_achizitiei: document.getElementById("gp-data-achizitiei").value,
+          loc_achizitie: document.getElementById("gp-loc-achizitie").value.trim() || null,
+          nr_factura: document.getElementById("gp-nr-factura").value.trim() || null,
+          nr_certificat_garantie: document.getElementById("gp-nr-certificat").value.trim() || null,
+          nr_fisa: document.getElementById("gp-nr-fisa").value.trim() || null
+        };
+
+        if (brandGrup === "bosch") {
+          payload.detalii_brand = {
+            denumire: denumireProdus,
+            e_nr: document.getElementById("bosch-e-nr").value.trim() || null,
+            fd: document.getElementById("bosch-fd").value.trim() || null,
+            z_nr: document.getElementById("bosch-z-nr").value.trim() || null
+          };
+        } else if (brandGrup === "electrolux") {
+          payload.detalii_brand = {
+            denumire: denumireProdus,
+            model: document.getElementById("elx-model").value.trim() || null,
+            pnc: document.getElementById("elx-pnc").value.trim() || null
+          };
+        } else {
+          payload.detalii_brand = {
+            denumire: denumireProdus,
+            campuri_specifice: document.getElementById("generic-spec").value.trim() || null
+          };
+        }
+      }
+
+      const res = await fetch("/api/bonuri", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        showMsg(body.error || "Eroare la salvarea bonului de reparație.", "error");
+        return;
+      }
+
+      showMsg(`Bonul #${body.id_bon} a fost salvat cu succes! Redirecționare...`, "ok");
+      setTimeout(() => {
+        window.location.href = "/";
+      }, 900);
+    }
+
+    toggleGarantieSection();
+    loadTehnicieni();
+  </script>
+</body>
+</html>

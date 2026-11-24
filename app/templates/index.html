@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Service & Garanții Electrocasnice — Panou Principal</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --surface: #1e293b;
+      --surface-2: #273549;
+      --border: #334155;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --success: #22c55e;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      padding: 24px;
+    }
+
+    .container {
+      max-width: 1360px;
+      margin: 0 auto;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+    }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .row-actions {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: background 0.15s, border-color 0.15s;
+    }
+
+    .btn:hover {
+      background: var(--surface-2);
+    }
+
+    .btn-sm {
+      padding: 5px 9px;
+      font-size: 0.78rem;
+      border-radius: 6px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #082f49;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      border-color: var(--accent-hover);
+      color: #fff;
+    }
+
+    .btn-danger {
+      background: transparent;
+      border-color: rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+
+    .btn-danger:hover {
+      background: rgba(239, 68, 68, 0.18);
+      border-color: var(--danger);
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--muted);
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background: var(--surface-2);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 18px;
+      margin-bottom: 24px;
+    }
+
+    .filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 8px 11px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--text);
+      font-size: 0.9rem;
+      font-family: inherit;
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+
+    th, td {
+      padding: 10px 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      vertical-align: middle;
+    }
+
+    th {
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      background: rgba(15, 23, 42, 0.45);
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .badge-garantie {
+      background: rgba(34, 197, 94, 0.16);
+      color: #86efac;
+      border: 1px solid rgba(34, 197, 94, 0.35);
+    }
+
+    .badge-post {
+      background: rgba(245, 158, 11, 0.16);
+      color: #fcd34d;
+      border: 1px solid rgba(245, 158, 11, 0.35);
+    }
+
+    .status-select {
+      min-width: 155px;
+      padding: 5px 8px;
+      font-size: 0.82rem;
+    }
+
+    .piesa-form {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 10px;
+      margin-bottom: 18px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .msg {
+      margin-bottom: 14px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.88rem;
+      display: none;
+    }
+
+    .msg.error {
+      display: block;
+      background: rgba(239, 68, 68, 0.15);
+      border: 1px solid rgba(239, 68, 68, 0.4);
+      color: #fca5a5;
+    }
+
+    .msg.ok {
+      display: block;
+      background: rgba(34, 197, 94, 0.15);
+      border: 1px solid rgba(34, 197, 94, 0.4);
+      color: #86efac;
+    }
+
+    .empty {
+      text-align: center;
+      color: var(--muted);
+      padding: 28px 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div>
+        <h1>Service &amp; Garanții Electrocasnice</h1>
+        <p>Gestiune bonuri de reparație, garanții producători și stoc piese (PostgreSQL + Flask)</p>
+      </div>
+      <div class="actions">
+        <button class="btn" type="button" onclick="refreshAll()">Reîncarcă datele</button>
+        <a class="btn btn-primary" href="/formular">+ Bon nou</a>
+      </div>
+    </header>
+
+    <div id="feedback" class="msg"></div>
+
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-bonuri" type="button" onclick="switchTab('bonuri')">Bonuri de reparație</button>
+      <button class="tab-btn" id="tab-piese" type="button" onclick="switchTab('piese')">Stoc piese</button>
+    </div>
+
+    <section class="panel" id="panel-bonuri">
+      <div class="filters">
+        <input type="text" id="filter-search" placeholder="Caută client, telefon, aparat, defect sau observații..." oninput="renderBonuri()" />
+        <select id="filter-tip" onchange="renderBonuri()">
+          <option value="all">Toate tipurile</option>
+          <option value="garantie">În garanție</option>
+          <option value="post">Post-garanție</option>
+        </select>
+        <select id="filter-status" onchange="renderBonuri()">
+          <option value="all">Toate statusurile</option>
+          <option value="Introdus in sistem">Introdus in sistem</option>
+          <option value="In reparatie">In reparatie</option>
+          <option value="Piese comandate">Piese comandate</option>
+          <option value="Finalizat">Finalizat</option>
+          <option value="Predat clientului">Predat clientului</option>
+        </select>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th>Client</th>
+              <th>Tip</th>
+              <th>Aparat / Brand</th>
+              <th>Defect</th>
+              <th>Observații</th>
+              <th>Status</th>
+              <th>Acțiuni</th>
+            </tr>
+          </thead>
+          <tbody id="bonuri-tbody">
+            <tr><td colspan="8" class="empty">Se încarcă bonurile...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-piese" style="display: none;">
+      <form class="piesa-form" onsubmit="handleAddPiesa(event)">
+        <input type="text" id="piesa-cod" placeholder="Cod piesă (ex. P-305)" required />
+        <input type="text" id="piesa-denumire" placeholder="Denumire piesă" required />
+        <input type="text" id="piesa-brand" placeholder="Brand compatibil (ex. Bosch)" />
+        <input type="number" id="piesa-pret" step="0.01" min="0" placeholder="Preț unitar (RON)" required />
+        <input type="number" id="piesa-stoc" step="1" min="0" placeholder="Stoc disponibil" required />
+        <button class="btn btn-primary" type="submit">+ Adaugă piesă</button>
+      </form>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>#ID</th>
+              <th>Cod</th>
+              <th>Denumire</th>
+              <th>Brand compatibil</th>
+              <th>Preț unitar</th>
+              <th>Stoc disponibil</th>
+            </tr>
+          </thead>
+          <tbody id="piese-tbody">
+            <tr><td colspan="6" class="empty">Se încarcă piesele...</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const STATUS_OPTIONS = [
+      "Introdus in sistem",
+      "In reparatie",
+      "Piese comandate",
+      "Finalizat",
+      "Predat clientului"
+    ];
+
+    let allBonuri = [];
+    let allPiese = [];
+
+    function showMsg(text, type = "ok") {
+      const el = document.getElementById("feedback");
+      el.className = `msg ${type}`;
+      el.textContent = text;
+    }
+
+    function escapeHtml(val) {
+      if (val === null || val === undefined) return "";
+      return String(val)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;");
+    }
+
+    function switchTab(tab) {
+      document.getElementById("tab-bonuri").classList.toggle("active", tab === "bonuri");
+      document.getElementById("tab-piese").classList.toggle("active", tab === "piese");
+      document.getElementById("panel-bonuri").style.display = tab === "bonuri" ? "block" : "none";
+      document.getElementById("panel-piese").style.display = tab === "piese" ? "block" : "none";
+    }
+
+    async function loadBonuri() {
+      const res = await fetch("/api/bonuri");
+      if (!res.ok) {
+        showMsg("Eroare la încărcarea bonurilor din baza de date.", "error");
+        return;
+      }
+      allBonuri = await res.json();
+      renderBonuri();
+    }
+
+    async function loadPiese() {
+      const res = await fetch("/api/piese");
+      if (!res.ok) {
+        showMsg("Eroare la încărcarea pieselor.", "error");
+        return;
+      }
+      allPiese = await res.json();
+      renderPiese();
+    }
+
+    function renderBonuri() {
+      const q = document.getElementById("filter-search").value.trim().toLowerCase();
+      const tip = document.getElementById("filter-tip").value;
+      const status = document.getElementById("filter-status").value;
+
+      const filtered = allBonuri.filter(b => {
+        if (tip === "garantie" && !b.este_in_garantie) return false;
+        if (tip === "post" && b.este_in_garantie) return false;
+        if (status !== "all" && b.status !== status) return false;
+
+        if (q) {
+          const hay = [
+            b.id_bon,
+            b.nume_client,
+            b.telefon_client,
+            b.denumire_aparat,
+            b.brand,
+            b.defect,
+            b.observatii
+          ].join(" ").toLowerCase();
+          if (!hay.includes(q)) return false;
+        }
+        return true;
+      });
+
+      const tbody = document.getElementById("bonuri-tbody");
+      if (!filtered.length) {
+        tbody.innerHTML = '<tr><td colspan="8" class="empty">Nu există bonuri care să corespundă filtrelor.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = filtered.map(b => {
+        const badgeClass = b.este_in_garantie ? "badge-garantie" : "badge-post";
+        const badgeText = b.este_in_garantie ? "Garanție" : "Post-garanție";
+        const aparatInfo = b.brand
+          ? `${escapeHtml(b.denumire_aparat)} <span style="color:var(--muted)">(${escapeHtml(b.brand)})</span>`
+          : escapeHtml(b.denumire_aparat);
+
+        const optionsHtml = STATUS_OPTIONS.map(st => {
+          const sel = st === b.status ? "selected" : "";
+          return `<option value="${escapeHtml(st)}" ${sel}>${escapeHtml(st)}</option>`;
+        }).join("");
+
+        return `
+          <tr>
+            <td>#${b.id_bon}</td>
+            <td>
+              <div><strong>${escapeHtml(b.nume_client)}</strong></div>
+              <div style="color:var(--muted);font-size:0.8rem;">${escapeHtml(b.telefon_client)}</div>
+            </td>
+            <td><span class="badge ${badgeClass}">${badgeText}</span></td>
+            <td>${aparatInfo}</td>
+            <td>${escapeHtml(b.defect)}</td>
+            <td>${escapeHtml(b.observatii || "-")}</td>
+            <td>
+              <select class="status-select" onchange="updateStatus(${b.id_bon}, this.value)">
+                ${optionsHtml}
+              </select>
+            </td>
+            <td>
+              <div class="row-actions">
+                <a class="btn btn-sm" href="/formular?id=${b.id_bon}">Edit</a>
+                <button class="btn btn-sm" type="button">Print</button>
+                <button class="btn btn-sm btn-danger" type="button" onclick="deleteBon(${b.id_bon})">Șterge</button>
+              </div>
+            </td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function renderPiese() {
+      const tbody = document.getElementById("piese-tbody");
+      if (!allPiese.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="empty">Nu există piese înregistrate în stoc.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = allPiese.map(p => `
+        <tr>
+          <td>#${p.id_piesa}</td>
+          <td><strong>${escapeHtml(p.cod_piesa)}</strong></td>
+          <td>${escapeHtml(p.denumire)}</td>
+          <td>${escapeHtml(p.brand_compatibil || "-")}</td>
+          <td>${Number(p.pret_unitar).toFixed(2)} RON</td>
+          <td>${p.stoc_disponibil}</td>
+        </tr>
+      `).join("");
+    }
+
+    async function updateStatus(idBon, newStatus) {
+      const res = await fetch(`/api/bonuri/${idBon}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: newStatus })
+      });
+      if (!res.ok) {
+        showMsg("Nu s-a putut actualiza statusul bonului.", "error");
+        await loadBonuri();
+        return;
+      }
+      showMsg(`Statusul bonului #${idBon} a fost actualizat la "${newStatus}".`, "ok");
+      await loadBonuri();
+    }
+
+    async function deleteBon(idBon) {
+      if (!confirm(`Sigur vrei să ștergi bonul de reparație #${idBon}?`)) return;
+      const res = await fetch(`/api/bonuri/${idBon}`, { method: "DELETE" });
+      if (!res.ok) {
+        showMsg("Nu s-a putut șterge bonul.", "error");
+        return;
+      }
+      showMsg(`Bonul #${idBon} a fost șters.`, "ok");
+      await loadBonuri();
+    }
+
+    async function handleAddPiesa(event) {
+      event.preventDefault();
+      const payload = {
+        cod_piesa: document.getElementById("piesa-cod").value.trim(),
+        denumire: document.getElementById("piesa-denumire").value.trim(),
+        brand_compatibil: document.getElementById("piesa-brand").value.trim(),
+        pret_unitar: parseFloat(document.getElementById("piesa-pret").value),
+        stoc_disponibil: parseInt(document.getElementById("piesa-stoc").value, 10)
+      };
+
+      const res = await fetch("/api/piese", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload)
+      });
+
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        showMsg(body.error || "Eroare la adăugarea piesei.", "error");
+        return;
+      }
+
+      event.target.reset();
+      showMsg(`Piesa "${body.denumire}" (${body.cod_piesa}) a fost adăugată în stoc.`, "ok");
+      await loadPiese();
+    }
+
+    async function refreshAll() {
+      await Promise.all([loadBonuri(), loadPiese()]);
+    }
+
+    refreshAll();
+  </script>
+</body>
+</html>
