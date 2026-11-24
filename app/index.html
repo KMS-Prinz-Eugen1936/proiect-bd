@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <title>Service Electrocasnice — Panou Principal</title>
+    <style>
+        body { font-family: 'Segoe UI', Arial, sans-serif; margin: 0; background: #f4f6f9; color: #222; }
+        .navbar {
+            background: #1b365d;
+            color: #fff;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 16px;
+        }
+        .nav-left, .nav-right { display: flex; align-items: center; gap: 10px; }
+        .brand-title { font-weight: 700; font-size: 17px; margin-right: 12px; }
+        .nav-btn {
+            background: #2c5282;
+            color: #fff;
+            border: none;
+            padding: 8px 13px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .nav-btn:hover { background: #3b6ea5; }
+        .dropdown { position: relative; display: inline-block; }
+        .dropdown-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            background: #fff;
+            color: #222;
+            min-width: 160px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 20;
+            margin-top: 4px;
+            overflow: hidden;
+        }
+        .dropdown.open .dropdown-menu { display: block; }
+        .dropdown-item {
+            display: block;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            padding: 10px 14px;
+            font-size: 14px;
+            color: #222;
+            cursor: pointer;
+        }
+        .dropdown-item:hover { background: #eef2f7; }
+        .role-tag { font-size: 13px; color: #cbd5e1; margin-right: 6px; }
+
+        .page { padding: 24px; max-width: 1380px; margin: 0 auto; }
+        .card { background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.07); margin-bottom: 18px; }
+        .card-header { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+        h2 { color: #1b365d; margin: 0; }
+        .btn { background: #1b365d; color: #fff; border: none; padding: 7px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
+        .btn:hover { background: #2c5282; }
+        .btn-secondary { background: #e2e8f0; color: #1e293b; }
+        .btn-secondary:hover { background: #cbd5e1; }
+        .btn-danger { background: #b91c1c; }
+        .btn-danger:hover { background: #991b1b; }
+        select, input { padding: 7px 9px; border: 1px solid #cbd5e1; border-radius: 4px; font-size: 14px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 12px; }
+        th, td { border: 1px solid #e2e8f0; padding: 9px 10px; text-align: left; font-size: 14px; }
+        th { background: #eef2f7; color: #1e293b; }
+
+        .msg { padding: 10px 14px; margin-bottom: 16px; border-radius: 5px; display: none; }
+        .ok { background: #dcfce7; color: #166534; display: block; }
+        .err { background: #fee2e2; color: #991b1b; display: block; }
+
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.45);
+            justify-content: center;
+            align-items: center;
+            z-index: 50;
+        }
+        .modal-backdrop.open { display: flex; }
+        .modal {
+            background: #fff;
+            padding: 22px;
+            border-radius: 8px;
+            width: 100%;
+            max-width: 520px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal h3 { margin-top: 0; color: #1b365d; }
+        .field { margin-bottom: 12px; }
+        .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+        .field input, .field select { width: 100%; box-sizing: border-box; }
+        .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 16px; flex-wrap: wrap; }
+        .tech-list-btn {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 9px 12px;
+            margin-bottom: 6px;
+            background: #f1f5f9;
+            color: #1e293b;
+            border: 1px solid #cbd5e1;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .tech-list-btn:hover { background: #e2e8f0; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-left">
+            <span class="brand-title">Service Electrocasnice</span>
+            <a href="formular.html" class="nav-btn">+ Bon Nou</a>
+
+            <div class="dropdown" id="partsDropdown">
+                <button type="button" class="nav-btn" id="partsBtn">Piese ▾</button>
+                <div class="dropdown-menu">
+                    <button type="button" class="dropdown-item" id="addPartMenuBtn">Adaugă</button>
+                    <button type="button" class="dropdown-item" id="viewPartsMenuBtn">Vizualizare</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-right">
+            <span class="role-tag" id="currentSessionLabel">Utilizator: Vizitator</span>
+            <button type="button" class="nav-btn hidden" id="logAsBtn">Log as</button>
+            <button type="button" class="nav-btn" id="loginBtn">Login</button>
+        </div>
+    </nav>
+
+    <div class="page">
+        <div id="msg" class="msg"></div>
+
+        <div class="card">
+            <div class="card-header">
+                <h2>Tichete / Bonuri de Reparație</h2>
+                <button type="button" class="btn" id="filtersBtn">Filtre</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Nr. Bon</th>
+                        <th>Client</th>
+                        <th>Aparat</th>
+                        <th>Garanție</th>
+                        <th>Brand</th>
+                        <th>Defect Reclamat</th>
+                        <th>Observații</th>
+                        <th>Data Intrării</th>
+                        <th>Tehnician</th>
+                        <th>Status</th>
+                        <th>Acțiuni</th>
+                    </tr>
+                </thead>
+                <tbody id="ticheteTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- POP-UP FILTRE + BARĂ DE CĂUTARE -->
+    <div class="modal-backdrop" id="filtersModal">
+        <div class="modal">
+            <h3>Filtre &amp; Căutare</h3>
+
+            <div class="field">
+                <label for="searchBar">Căutare rapidă</label>
+                <input type="search" id="searchBar" placeholder="Caută după nr. bon, client, aparat, defect, observații...">
+            </div>
+
+            <div class="row-2">
+                <div class="field">
+                    <label for="filterGarantie">Garanție</label>
+                    <select id="filterGarantie">
+                        <option value="">Toate</option>
+                        <option value="DA">DA</option>
+                        <option value="NU">NU</option>
+                    </select>
+                </div>
+
+                <div class="field">
+                    <label for="filterBrand">Brand</label>
+                    <select id="filterBrand">
+                        <option value="">Toate</option>
+                        <option value="Bosch">Bosch</option>
+                        <option value="Siemens">Siemens</option>
+                        <option value="Neff">Neff</option>
+                        <option value="Electrolux">Electrolux</option>
+                        <option value="AEG">AEG</option>
+                        <option value="Miele">Miele</option>
+                        <option value="Teka">Teka</option>
+                        <option value="Samus">Samus</option>
+                        <option value="Albatros">Albatros</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="field">
+                <label for="filterStatus">Status</label>
+                <select id="filterStatus">
+                    <option value="">Toate</option>
+                    <option value="Introdus in sistem">Introdus in sistem</option>
+                    <option value="In reparatie">In reparatie</option>
+                    <option value="Piese comandate">Piese comandate</option>
+                    <option value="Piese venite">Piese venite</option>
+                    <option value="Reparat">Reparat</option>
+                    <option value="Refuz reparatie">Refuz reparatie</option>
+                </select>
+            </div>
+
+            <div class="row-2">
+                <div class="field">
+                    <label for="filterDataDeLa">Data intrării (de la)</label>
+                    <input type="date" id="filterDataDeLa">
+                </div>
+
+                <div class="field">
+                    <label for="filterDataPanaLa">Data intrării (până la)</label>
+                    <input type="date" id="filterDataPanaLa">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-secondary" id="resetFiltersBtn">Resetează</button>
+                <button type="button" class="btn" id="closeFiltersBtn">Aplică / Închide</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL LOGIN (DOAR UTILIZATOR + PAROLĂ) -->
+    <div class="modal-backdrop" id="loginModal">
+        <div class="modal">
+            <h3>Autentificare</h3>
+            <form id="loginForm">
+                <div class="field">
+                    <label for="loginUser">Utilizator</label>
+                    <input type="text" id="loginUser" placeholder="ex: admin, operator1, tehnician1" required>
+                </div>
+                <div class="field">
+                    <label for="loginPass">Parolă</label>
+                    <input type="password" id="loginPass" placeholder="••••••••" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-danger" id="closeLoginBtn">Închide</button>
+                    <button type="submit" class="btn">Intră în cont</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- POPUP LOG AS TEHNICIENI (DOAR PENTRU ADMIN) -->
+    <div class="modal-backdrop" id="logAsModal">
+        <div class="modal">
+            <h3>Log as — Alege Tehnician</h3>
+            <p style="font-size:13px; color:#475569;">Vezi și gestionezi tichetele alocate tehnicianului selectat:</p>
+            <div id="techButtonsContainer"></div>
+            <div class="modal-actions">
+                <button type="button" class="btn" id="resetAdminBtn">Revino la Admin</button>
+                <button type="button" class="btn btn-danger" id="closeLogAsBtn">Închide</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL ADAUGĂ PIESĂ -->
+    <div class="modal-backdrop" id="addPartModal">
+        <div class="modal">
+            <h3>Adaugă Piesă</h3>
+            <form id="addPartForm">
+                <div class="field">
+                    <label for="codPiesa">Cod Piesă *</label>
+                    <input type="text" id="codPiesa" required>
+                </div>
+                <div class="field">
+                    <label for="denumirePiesa">Denumire *</label>
+                    <input type="text" id="denumirePiesa" required>
+                </div>
+                <div class="field">
+                    <label for="brandCompatibil">Brand Compatibil *</label>
+                    <input type="text" id="brandCompatibil" required>
+                </div>
+                <div class="field">
+                    <label for="pretUnitar">Preț Unitar *</label>
+                    <input type="number" step="0.01" id="pretUnitar" required>
+                </div>
+                <div class="field">
+                    <label for="stocDisponibil">Stoc Disponibil *</label>
+                    <input type="number" id="stocDisponibil" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-danger" id="closeAddPartBtn">Anulează</button>
+                    <button type="submit" class="btn">Salvează Piesă</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL VIZUALIZARE PIESE -->
+    <div class="modal-backdrop" id="viewPartsModal">
+        <div class="modal" style="max-width:650px;">
+            <h3>Vizualizare Piese</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Cod</th>
+                        <th>Denumire</th>
+                        <th>Brand</th>
+                        <th>Preț</th>
+                        <th>Stoc</th>
+                    </tr>
+                </thead>
+                <tbody id="partsModalBody"></tbody>
+            </table>
+            <div class="modal-actions">
+                <button type="button" class="btn" id="closeViewPartsBtn">Închide</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            const STATUSURI = [
+                "Introdus in sistem",
+                "In reparatie",
+                "Piese comandate",
+                "Piese venite",
+                "Reparat",
+                "Refuz reparatie"
+            ];
+
+            const TEHNICIENI = [
+                { id: 1, nume: "Tehnician 1", username: "tehnician1" },
+                { id: 2, nume: "Tehnician 2", username: "tehnician2" },
+                { id: 3, nume: "Tehnician 3", username: "tehnician3" }
+            ];
+
+            // Mapare demo pentru identificare automată după username (în backend va veni din tabela utilizator)
+            const CONTURI_DEMO = {
+                "admin": { role: "Admin", techId: null, techName: null },
+                "operator": { role: "Operator", techId: null, techName: null },
+                "operator1": { role: "Operator", techId: null, techName: null },
+                "tehnician1": { role: "Tehnician", techId: 1, techName: "Tehnician 1" },
+                "tehnician2": { role: "Tehnician", techId: 2, techName: "Tehnician 2" },
+                "tehnician3": { role: "Tehnician", techId: 3, techName: "Tehnician 3" }
+            };
+
+            let sessionState = {
+                role: "Guest",
+                username: null,
+                activeTechId: null,
+                activeTechName: null
+            };
+
+            let sampleTichete = [
+                {
+                    id_bon: 101,
+                    nume_client: "Popescu Ion",
+                    denumire_aparat: "Cuptor incorporabil",
+                    este_in_garantie: true,
+                    brand: "Bosch",
+                    defect: "Nu încălzește",
+                    observatii: "Are certificat original",
+                    data_intrarii: "2026-11-20T09:30:00",
+                    id_tehnician: 1,
+                    nume_tehnician: "Tehnician 1",
+                    status: "In reparatie"
+                },
+                {
+                    id_bon: 102,
+                    nume_client: "Ionescu Maria",
+                    denumire_aparat: "Masina de spalat",
+                    este_in_garantie: false,
+                    brand: null,
+                    defect: "Nu evacuează apa",
+                    observatii: "Fără accesorii suplimentare",
+                    data_intrarii: "2026-11-21T14:15:00",
+                    id_tehnician: 2,
+                    nume_tehnician: "Tehnician 2",
+                    status: "Piese comandate"
+                },
+                {
+                    id_bon: 103,
+                    nume_client: "Radu Andrei",
+                    denumire_aparat: "Masina de spalat vase",
+                    este_in_garantie: true,
+                    brand: "AEG",
+                    defect: "Eroare i20",
+                    observatii: "-",
+                    data_intrarii: "2026-11-23T11:05:00",
+                    id_tehnician: 1,
+                    nume_tehnician: "Tehnician 1",
+                    status: "Introdus in sistem"
+                }
+            ];
+
+            let samplePiese = [
+                { cod_piesa: "P-100", denumire: "Rezistență cuptor", brand_compatibil: "Bosch", pret_unitar: 145.00, stoc_disponibil: 6 },
+                { cod_piesa: "P-204", denumire: "Pompă evacuare", brand_compatibil: "Electrolux / AEG", pret_unitar: 90.00, stoc_disponibil: 12 }
+            ];
+
+            function showMsg(text, isError) {
+                const el = document.getElementById("msg");
+                el.textContent = text;
+                el.className = "msg " + (isError ? "err" : "ok");
+            }
+
+            function openModal(id) {
+                document.getElementById(id).classList.add("open");
+            }
+
+            function closeModal(id) {
+                document.getElementById(id).classList.remove("open");
+            }
+
+            function resolveUserPermissions(username) {
+                const key = (username || "").toLowerCase();
+                if (CONTURI_DEMO[key]) {
+                    return CONTURI_DEMO[key];
+                }
+                if (key.indexOf("admin") !== -1) {
+                    return { role: "Admin", techId: null, techName: null };
+                }
+                if (key.indexOf("tech") !== -1 || key.indexOf("tehnician") !== -1) {
+                    return { role: "Tehnician", techId: 1, techName: "Tehnician 1" };
+                }
+                return { role: "Operator", techId: null, techName: null };
+            }
+
+            function updateNavbarUI() {
+                const label = document.getElementById("currentSessionLabel");
+                const logAsBtn = document.getElementById("logAsBtn");
+
+                if (sessionState.role === "Admin") {
+                    logAsBtn.classList.remove("hidden");
+                    label.textContent = sessionState.activeTechId
+                        ? "Rol: Admin (Logat ca: " + sessionState.activeTechName + ")"
+                        : "Rol: Admin (" + sessionState.username + ")";
+                } else if (sessionState.role === "Tehnician") {
+                    logAsBtn.classList.add("hidden");
+                    label.textContent = "Rol: Tehnician (" + (sessionState.activeTechName || sessionState.username) + ")";
+                } else if (sessionState.role === "Operator") {
+                    logAsBtn.classList.add("hidden");
+                    label.textContent = "Rol: Operator (" + sessionState.username + ")";
+                } else {
+                    logAsBtn.classList.add("hidden");
+                    label.textContent = "Utilizator: Vizitator";
+                }
+            }
+
+            function populateTechButtons() {
+                const container = document.getElementById("techButtonsContainer");
+                container.innerHTML = TEHNICIENI.map(function (t) {
+                    return '<button type="button" class="tech-list-btn" data-tech-id="' + t.id + '" data-tech-name="' + t.nume + '">' + t.nume + "</button>";
+                }).join("");
+
+                container.querySelectorAll(".tech-list-btn").forEach(function (btn) {
+                    btn.addEventListener("click", function () {
+                        const techId = Number(btn.getAttribute("data-tech-id"));
+                        const techName = btn.getAttribute("data-tech-name");
+                        sessionState.activeTechId = techId;
+                        sessionState.activeTechName = techName;
+                        updateNavbarUI();
+                        renderTichete();
+                        closeModal("logAsModal");
+                        showMsg("Vizualizezi tichetele alocate pentru " + techName + ".", false);
+                    });
+                });
+            }
+
+            function getFilteredTichete() {
+                let list = sampleTichete.slice();
+
+                if ((sessionState.role === "Tehnician" || sessionState.role === "Admin") && sessionState.activeTechId) {
+                    list = list.filter(function (t) {
+                        return Number(t.id_tehnician) === Number(sessionState.activeTechId);
+                    });
+                }
+
+                const searchQ = document.getElementById("searchBar").value.trim().toLowerCase();
+                const garantieQ = document.getElementById("filterGarantie").value;
+                const brandQ = document.getElementById("filterBrand").value.toLowerCase();
+                const statusQ = document.getElementById("filterStatus").value;
+                const dataDeLa = document.getElementById("filterDataDeLa").value;
+                const dataPanaLa = document.getElementById("filterDataPanaLa").value;
+
+                if (searchQ) {
+                    list = list.filter(function (t) {
+                        return String(t.id_bon).indexOf(searchQ) !== -1 ||
+                            (t.nume_client || "").toLowerCase().indexOf(searchQ) !== -1 ||
+                            (t.denumire_aparat || "").toLowerCase().indexOf(searchQ) !== -1 ||
+                            (t.brand || "").toLowerCase().indexOf(searchQ) !== -1 ||
+                            (t.defect || "").toLowerCase().indexOf(searchQ) !== -1 ||
+                            (t.observatii || "").toLowerCase().indexOf(searchQ) !== -1;
+                    });
+                }
+                if (garantieQ) {
+                    const wantGarantie = garantieQ === "DA";
+                    list = list.filter(function (t) {
+                        return Boolean(t.este_in_garantie) === wantGarantie;
+                    });
+                }
+                if (brandQ) {
+                    list = list.filter(function (t) {
+                        return t.este_in_garantie && (t.brand || "").toLowerCase().indexOf(brandQ) !== -1;
+                    });
+                }
+                if (statusQ) {
+                    list = list.filter(function (t) {
+                        return t.status === statusQ;
+                    });
+                }
+                if (dataDeLa) {
+                    list = list.filter(function (t) {
+                        return t.data_intrarii && t.data_intrarii.slice(0, 10) >= dataDeLa;
+                    });
+                }
+                if (dataPanaLa) {
+                    list = list.filter(function (t) {
+                        return t.data_intrarii && t.data_intrarii.slice(0, 10) <= dataPanaLa;
+                    });
+                }
+
+                return list;
+            }
+
+            function renderTichete() {
+                const list = getFilteredTichete();
+                const tbody = document.getElementById("ticheteTableBody");
+                tbody.innerHTML = "";
+
+                if (list.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="11">Nu există tichete care să corespundă criteriilor.</td></tr>';
+                    return;
+                }
+
+                list.forEach(function (t) {
+                    const garantieText = t.este_in_garantie ? "DA" : "NU";
+                    const brandText = t.este_in_garantie ? (t.brand || "-") : "-";
+                    const dataText = t.data_intrarii ? new Date(t.data_intrarii).toLocaleDateString("ro-RO") : "-";
+                    const options = STATUSURI.map(function (s) {
+                        const sel = t.status === s ? " selected" : "";
+                        return '<option value="' + s + '"' + sel + ">" + s + "</option>";
+                    }).join("");
+
+                    tbody.innerHTML +=
+                        "<tr>" +
+                        "<td>#" + t.id_bon + "</td>" +
+                        "<td>" + t.nume_client + "</td>" +
+                        "<td>" + (t.denumire_aparat || "-") + "</td>" +
+                        "<td>" + garantieText + "</td>" +
+                        "<td>" + brandText + "</td>" +
+                        "<td>" + t.defect + "</td>" +
+                        "<td>" + (t.observatii || "-") + "</td>" +
+                        "<td>" + dataText + "</td>" +
+                        "<td>" + (t.nume_tehnician || "-") + "</td>" +
+                        '<td><select class="row-status-select" data-bon-id="' + t.id_bon + '">' + options + "</select></td>" +
+                        "<td>" +
+                        '<button type="button" class="btn save-status-btn" data-bon-id="' + t.id_bon + '">Salvează</button> ' +
+                        '<button type="button" class="btn btn-danger delete-bon-btn" data-bon-id="' + t.id_bon + '">Șterge</button>' +
+                        "</td>" +
+                        "</tr>";
+                });
+
+                tbody.querySelectorAll(".save-status-btn").forEach(function (btn) {
+                    btn.addEventListener("click", function () {
+                        const idBon = Number(btn.getAttribute("data-bon-id"));
+                        const sel = tbody.querySelector('.row-status-select[data-bon-id="' + idBon + '"]');
+                        const item = sampleTichete.find(function (x) { return x.id_bon === idBon; });
+                        if (item && sel) {
+                            item.status = sel.value;
+                            showMsg("Statusul tichetului #" + idBon + ' a fost actualizat la "' + sel.value + '".', false);
+                        }
+                    });
+                });
+
+                tbody.querySelectorAll(".delete-bon-btn").forEach(function (btn) {
+                    btn.addEventListener("click", function () {
+                        const idBon = Number(btn.getAttribute("data-bon-id"));
+                        sampleTichete = sampleTichete.filter(function (x) { return x.id_bon !== idBon; });
+                        renderTichete();
+                        showMsg("Tichetul #" + idBon + " a fost șters.", false);
+                    });
+                });
+            }
+
+            // Dropdown Piese
+            document.getElementById("partsBtn").addEventListener("click", function (e) {
+                e.stopPropagation();
+                document.getElementById("partsDropdown").classList.toggle("open");
+            });
+
+            document.addEventListener("click", function (e) {
+                const dd = document.getElementById("partsDropdown");
+                if (dd && !dd.contains(e.target)) {
+                    dd.classList.remove("open");
+                }
+            });
+
+            // Filtre modal
+            document.getElementById("filtersBtn").addEventListener("click", function () {
+                openModal("filtersModal");
+                document.getElementById("searchBar").focus();
+            });
+
+            document.getElementById("closeFiltersBtn").addEventListener("click", function () {
+                closeModal("filtersModal");
+            });
+
+            document.getElementById("resetFiltersBtn").addEventListener("click", function () {
+                document.getElementById("searchBar").value = "";
+                document.getElementById("filterGarantie").value = "";
+                document.getElementById("filterBrand").value = "";
+                document.getElementById("filterStatus").value = "";
+                document.getElementById("filterDataDeLa").value = "";
+                document.getElementById("filterDataPanaLa").value = "";
+                renderTichete();
+            });
+
+            ["searchBar", "filterGarantie", "filterBrand", "filterStatus", "filterDataDeLa", "filterDataPanaLa"].forEach(function (id) {
+                const el = document.getElementById(id);
+                el.addEventListener("input", renderTichete);
+                el.addEventListener("change", renderTichete);
+            });
+
+            // Login modal (doar user + parolă -> permisiuni automate)
+            document.getElementById("loginBtn").addEventListener("click", function () {
+                openModal("loginModal");
+                document.getElementById("loginUser").focus();
+            });
+
+            document.getElementById("closeLoginBtn").addEventListener("click", function () {
+                closeModal("loginModal");
+            });
+
+            document.getElementById("loginForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                const username = document.getElementById("loginUser").value.trim();
+                const perms = resolveUserPermissions(username);
+
+                sessionState = {
+                    role: perms.role,
+                    username: username,
+                    activeTechId: perms.techId,
+                    activeTechName: perms.techName
+                };
+
+                updateNavbarUI();
+                renderTichete();
+                closeModal("loginModal");
+                document.getElementById("loginForm").reset();
+                showMsg("Autentificat ca " + username + " (Permisiuni: " + perms.role + ").", false);
+            });
+
+            // Log as modal
+            document.getElementById("logAsBtn").addEventListener("click", function () {
+                populateTechButtons();
+                openModal("logAsModal");
+            });
+
+            document.getElementById("closeLogAsBtn").addEventListener("click", function () {
+                closeModal("logAsModal");
+            });
+
+            document.getElementById("resetAdminBtn").addEventListener("click", function () {
+                sessionState.activeTechId = null;
+                sessionState.activeTechName = null;
+                updateNavbarUI();
+                renderTichete();
+                closeModal("logAsModal");
+                showMsg("Ai revenit la vizualizarea completă de Admin.", false);
+            });
+
+            // Piese modals
+            document.getElementById("addPartMenuBtn").addEventListener("click", function () {
+                document.getElementById("partsDropdown").classList.remove("open");
+                openModal("addPartModal");
+            });
+
+            document.getElementById("closeAddPartBtn").addEventListener("click", function () {
+                closeModal("addPartModal");
+            });
+
+            document.getElementById("addPartForm").addEventListener("submit", function (e) {
+                e.preventDefault();
+                samplePiese.push({
+                    cod_piesa: document.getElementById("codPiesa").value.trim(),
+                    denumire: document.getElementById("denumirePiesa").value.trim(),
+                    brand_compatibil: document.getElementById("brandCompatibil").value.trim(),
+                    pret_unitar: Number(document.getElementById("pretUnitar").value),
+                    stoc_disponibil: Number(document.getElementById("stocDisponibil").value)
+                });
+                e.target.reset();
+                closeModal("addPartModal");
+                showMsg("Piesa a fost adăugată.", false);
+            });
+
+            document.getElementById("viewPartsMenuBtn").addEventListener("click", function () {
+                document.getElementById("partsDropdown").classList.remove("open");
+                const tbody = document.getElementById("partsModalBody");
+                tbody.innerHTML = samplePiese.map(function (p) {
+                    return "<tr>" +
+                        "<td>" + p.cod_piesa + "</td>" +
+                        "<td>" + p.denumire + "</td>" +
+                        "<td>" + p.brand_compatibil + "</td>" +
+                        "<td>" + p.pret_unitar.toFixed(2) + "</td>" +
+                        "<td>" + p.stoc_disponibil + "</td>" +
+                        "</tr>";
+                }).join("");
+                openModal("viewPartsModal");
+            });
+
+            document.getElementById("closeViewPartsBtn").addEventListener("click", function () {
+                closeModal("viewPartsModal");
+            });
+
+            updateNavbarUI();
+            renderTichete();
+        })();
+    </script>
+</body>
+</html>
